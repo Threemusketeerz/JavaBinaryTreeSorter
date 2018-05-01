@@ -1,7 +1,7 @@
-public class BinaryNode //<T extends Comparable<T>>
+public class BinaryNode <T extends Comparable<T>>
 {
     //private BinaryNode parent;
-    private Integer data;
+    private T data;
     private BinaryNode leftChild;
     private BinaryNode rightChild;
 
@@ -12,26 +12,26 @@ public class BinaryNode //<T extends Comparable<T>>
         this.rightChild = null;
     }
 
-    public BinaryNode(Integer data)
+    public BinaryNode(T data)
     {
         this.data = data;
         this.leftChild = null;
         this.rightChild = null;
     }
 
-    public BinaryNode(Integer data, BinaryNode leftChild, BinaryNode rightChild)
+    public BinaryNode(T data, BinaryNode leftChild, BinaryNode rightChild)
     {
         this.data = data;
         this.leftChild = leftChild;
         this.rightChild = rightChild;
     }
 
-    public void setData(Integer data)
+    public void setData(T data)
     {
         this.data = data;
     }
 
-    public Integer getData()
+    public T getData()
     {
         return data;
     }
