@@ -1,4 +1,4 @@
-public class BinaryNode
+public class BinaryNode //<T extends Comparable<T>>
 {
     //private BinaryNode parent;
     private Integer data;
