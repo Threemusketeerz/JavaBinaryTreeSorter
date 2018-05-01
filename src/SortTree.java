@@ -10,7 +10,7 @@ public class SortTree <T extends Comparable<T>>
     {
         try
         {
-            this.root = new BinaryNode(dataSet[0]);
+            this.root = new BinaryNode<T>(dataSet[0]);
         }
         catch (ArrayIndexOutOfBoundsException aiooe)
         {
@@ -20,7 +20,7 @@ public class SortTree <T extends Comparable<T>>
         this.dataSet = dataSet;
     }
 
-    public SortTree(BinaryNode root, T[] dataSet)
+    public SortTree(BinaryNode<T> root, T[] dataSet)
     {
         this.root = root;
         this.dataSet = dataSet;
@@ -28,7 +28,7 @@ public class SortTree <T extends Comparable<T>>
 
     public void add(T data)
     {
-        BinaryNode tempNode = root;
+        BinaryNode<T> tempNode = root;
         boolean planted = false;
         System.out.println("--- Growing branch with " + data + " ---");
         while (!planted)
@@ -44,7 +44,7 @@ public class SortTree <T extends Comparable<T>>
 
             if (comparison < 0 && tempNode.getRightChild() == null)
             {
-                tempNode.setRightChild(new BinaryNode(data));
+                tempNode.setRightChild(new BinaryNode<T>(data));
                 planted = true;
                 System.out.println("Planted a new node on right branch!");
             }
@@ -137,7 +137,7 @@ public class SortTree <T extends Comparable<T>>
 //        BinaryNode rootNode = new BinaryNode<Integer>(dataSet[0]);
         // Takes an array of something comparable.
         // I suppose you could make this "addable"
-        SortTree sortTree = new SortTree<Integer>(fixedSet2);
+        SortTree sortTree = new SortTree<>(fixedSet2);
 
 
         // This would also be able to
