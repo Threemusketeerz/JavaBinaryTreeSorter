@@ -43,6 +43,9 @@ public class SortTree <T extends Comparable<T>>
 
 
         System.out.println("--- Growing branch with " + data + " ---");
+        if (root.getData() == null)
+            root.setData(data);
+
         while (!planted)
         {
             int comparison = tempNode.getData().compareTo(data);
