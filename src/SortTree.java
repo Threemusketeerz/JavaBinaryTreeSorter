@@ -31,13 +31,16 @@ public class SortTree <T extends Comparable<T>>
         BinaryNode<T> tempNode = root;
         boolean planted = false;
         System.out.println("--- Growing branch with " + data + " ---");
+        if (root.getData() == null)
+            root.setData(data);
+
         while (!planted)
         {
             int comparison = tempNode.getData().compareTo(data);
 
             if (comparison >= 0 && tempNode.getLeftChild() == null)
             {
-                tempNode.setLeftChild(new BinaryNode(data));
+                tempNode.setLeftChild(new BinaryNode<T>(data));
                 planted = true;
                 System.out.println("Planted a new node on left branch!");
             }
@@ -129,8 +132,8 @@ public class SortTree <T extends Comparable<T>>
         Integer[] dataSet = SortTree.generateDataSet(amount);
 
         Integer[] fixedSet = { 7, 5, 6, 3, 2 }; // Expecting ordered to 2, 3, 5, 6, 7
-        Integer[] fixedSet2 = { 10, 2, 4, 2, 0, 3, 5, 2, 6, 8, 3, 2, 3, 6, 4, 7};
-        Integer[] fixedSet3 = {2, 6, 8, 3, 2, 3, 6, 4, 7}; // Expecting ordered to 2, 2, 3, 4, 6, 6, 7, 8,
+        Integer[] fixedSet2 = { 10, 2, 4, 2, 0, 3, 5, 2, 6, 8, 3, 2, 3, 6, 4, 7 };
+        Integer[] fixedSet3 = { 2, 6, 8, 3, 2, 3, 6, 4, 7 }; // Expecting ordered to 2, 2, 3, 4, 6, 6, 7, 8,
         System.out.print("");
         // Init rootNode with a value you want compared to or a datasetvalue.
         // For now it grabs the first value and skips it in the iteration.
@@ -138,10 +141,13 @@ public class SortTree <T extends Comparable<T>>
         // Takes an array of something comparable.
         // I suppose you could make this "addable"
         SortTree sortTree = new SortTree<>(fixedSet2);
-
+        for (int i = 1; i < dataSet.length; i++)
+        {
+            sortTree.add(dataSet[i]);
+        }
 
         // This would also be able to
-        sortTree.sort();
+//        sortTree.sort();
         sortTree.traverse(sortTree.getRoot());
 
         System.out.println("");
