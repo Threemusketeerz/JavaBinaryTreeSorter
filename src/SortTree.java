@@ -1,35 +1,47 @@
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.Random;
 
+/**
+ * Made generic and dependant on Comparable<T> to be able to sort..
+ * @param <T> Generic type
+ */
 public class SortTree <T extends Comparable<T>>
 {
+    // Root node, starting point of everything.
     private BinaryNode<T> root;
-    private T[] dataSet;
 
-    public SortTree(T[] dataSet)
+    // This is solely created for the purposes of Graphviz.
+    static private int nullCount = 0;
+
+    public SortTree()
     {
-        try
-        {
-            this.root = new BinaryNode<T>(dataSet[0]);
-        }
-        catch (ArrayIndexOutOfBoundsException aiooe)
-        {
-            System.out.println("You cannot add an empty array!");
-            aiooe.printStackTrace();
-        }
-        this.dataSet = dataSet;
+        this.root = null;
+        nullCount = 0;
     }
 
-    public SortTree(BinaryNode<T> root, T[] dataSet)
+    public SortTree(T data)
     {
-        this.root = root;
-        this.dataSet = dataSet;
+        this.root = new BinaryNode<>(data);
     }
 
+    /**
+     * Add data to the sorted tree. The data you add will automatically be positioned in an ordered manner.
+     * @param data Wanted data to be passed and ordered into binary tree
+     */
     public void add(T data)
     {
+        if (root == null)
+        {
+            root = new BinaryNode<>(data);
+            return;
+        }
+
+        // Create a node we can iterate with. It starts out as root.
         BinaryNode<T> tempNode = root;
+        // For the purpose of checking wether we've "planted" our data yet.
         boolean planted = false;
+
+
         System.out.println("--- Growing branch with " + data + " ---");
         while (!planted)
         {
@@ -37,7 +49,7 @@ public class SortTree <T extends Comparable<T>>
 
             if (comparison >= 0 && tempNode.getLeftChild() == null)
             {
-                tempNode.setLeftChild(new BinaryNode(data));
+                tempNode.setLeftChild(new BinaryNode<T>(data));
                 planted = true;
                 System.out.println("Planted a new node on left branch!");
             }
@@ -63,14 +75,6 @@ public class SortTree <T extends Comparable<T>>
         System.out.println("--- DONE ---");
     }
 
-    public void sort()
-    {
-        for (int i = 1; i < dataSet.length; i++)
-        {
-            add(dataSet[i]);
-        }
-    }
-
     public void traverse(BinaryNode root)
     {
 
@@ -89,23 +93,65 @@ public class SortTree <T extends Comparable<T>>
 
     /**
      * Generate a graphviz visual of the binary tree.
-     * @param root          Root of the tree
-     * @param fileToWriteTo File to write the DOT language to.
+     * @param root  Root of the tree
+     * @param body  to write the DOT language to.
      */
-    public void generateVisual(BinaryNode root, FileOutputStream fileToWriteTo)
+    private void generateDotBody(BinaryNode root, StringBuilder body)
     {
+
         if (root.getLeftChild() != null)
         {
-            traverse(root.getLeftChild());
+            body.append("\"" + root.toString()+ "\"" + "->" + "\"" + root.getLeftChild().toString()+ "\"" + ";\n");
+            generateDotBody(root.getLeftChild(), body);
+        }
+        else
+        {
+            nullCount++;
+            body.append("null" + nullCount + " [shape=point]; \n");
+            body.append("\"" + root.toString()+ "\"" + "->null" + nullCount + ";\n");
         }
 
-//        System.out.print(root.getData() + ",");
 
         if (root.getRightChild() != null)
         {
-            traverse(root.getRightChild());
+            body.append("\"" + root.toString()+ "\"" + "->"
+                    + "\"" + root.getRightChild().toString() + "\"" + ";\n");
+            generateDotBody(root.getRightChild(), body);
+        }
+        else
+        {
+            nullCount++;
+            body.append("null" + nullCount + " [shape=point]; \n");
+            body.append("\"" + root.toString()+ "\"" + "->null" + nullCount + ";\n");
         }
 
+    }
+
+    /**
+     * Builds the DOT file to be shown on viz-js.com
+     * @param outputFile                File to write to
+     */
+
+    public void buildDotFile(File outputFile)
+    {
+        try
+        {
+            FileWriter outputFileWriter = new FileWriter(outputFile);
+            String head = "digraph G {\n";
+            StringBuilder body = new StringBuilder();
+            String tail = "}\n";
+
+            generateDotBody(root, body);
+
+            outputFileWriter.write(head + body.toString() + tail);
+            outputFileWriter.flush();
+            outputFileWriter.close();
+        }
+        catch(IOException ioe)
+        {
+            System.out.println("Failed writing to file");
+            ioe.printStackTrace();
+        }
     }
 
     public BinaryNode getRoot()
@@ -113,40 +159,4 @@ public class SortTree <T extends Comparable<T>>
         return root;
     }
 
-    public static Integer[] generateDataSet(Integer amount)
-    {
-        Integer[] generatedSet = new Integer[amount];
-        Random random = new Random();
-        for (int i = 0; i < amount; i++)
-            generatedSet[i] = random.nextInt(10);
-
-        return generatedSet;
-    }
-
-    public static void main(String[] args)
-    {
-        int amount = 100;
-        Integer[] dataSet = SortTree.generateDataSet(amount);
-
-        Integer[] fixedSet = { 7, 5, 6, 3, 2 }; // Expecting ordered to 2, 3, 5, 6, 7
-        Integer[] fixedSet2 = { 10, 2, 4, 2, 0, 3, 5, 2, 6, 8, 3, 2, 3, 6, 4, 7};
-        Integer[] fixedSet3 = {2, 6, 8, 3, 2, 3, 6, 4, 7}; // Expecting ordered to 2, 2, 3, 4, 6, 6, 7, 8,
-        System.out.print("");
-        // Init rootNode with a value you want compared to or a datasetvalue.
-        // For now it grabs the first value and skips it in the iteration.
-//        BinaryNode rootNode = new BinaryNode<Integer>(dataSet[0]);
-        // Takes an array of something comparable.
-        // I suppose you could make this "addable"
-        SortTree sortTree = new SortTree<>(fixedSet2);
-
-
-        // This would also be able to
-        sortTree.sort();
-        sortTree.traverse(sortTree.getRoot());
-
-        System.out.println("");
-        System.out.println("DATASET: ");
-        for (int i = 0; i < amount; i++)
-            System.out.print(dataSet[i] + ",");
-    }
 }
