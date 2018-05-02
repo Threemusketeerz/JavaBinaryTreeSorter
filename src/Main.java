@@ -19,7 +19,7 @@ public class Main
 
     public static void main(String[] args)
     {
-        int amount = 10000;
+        int amount = 1000;
         Integer[] dataSet = generateDataSet(amount);
 
         Integer[] fixedSet = { 7, 5, 6, 3, 2 }; // Expecting ordered to 2, 3, 5, 6, 7
